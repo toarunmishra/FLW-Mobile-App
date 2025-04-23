@@ -53,7 +53,7 @@ class UserRepo @Inject constructor(
                 if (ie.message == "Invalid username / password")
                     return@withContext NetworkResponse.Error(message = "Invalid Username/password")
                 else
-                    return@withContext NetworkResponse.Error(message = "Something went wrong... Try again later")
+                    return@withContext NetworkResponse.Error(message = "Something went wrong... Try again later"+ie.message)
 
             }
         }

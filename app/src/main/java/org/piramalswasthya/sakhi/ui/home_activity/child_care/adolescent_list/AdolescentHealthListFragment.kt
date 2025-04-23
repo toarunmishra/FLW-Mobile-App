@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
+import org.piramalswasthya.sakhi.adapters.AdolescentHealthListAdapter
 import org.piramalswasthya.sakhi.adapters.BenListAdapter
 import org.piramalswasthya.sakhi.contracts.SpeechToTextContract
 import org.piramalswasthya.sakhi.databinding.FragmentDisplaySearchRvButtonBinding
@@ -21,7 +22,7 @@ import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.home.HomeViewModel
 
 @AndroidEntryPoint
-class AdolescentListFragment : Fragment() {
+class AdolescentHealthListFragment : Fragment() {
 
     private var _binding: FragmentDisplaySearchRvButtonBinding? = null
 
@@ -29,14 +30,13 @@ class AdolescentListFragment : Fragment() {
         get() = _binding!!
 
 
-    private val viewModel: AdolescentListViewModel by viewModels()
+    private val viewModel: AdolescentHealthListViewModel by viewModels()
 
     private val homeViewModel: HomeViewModel by viewModels({ requireActivity() })
 
     private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
         binding.searchView.setText(value)
         binding.searchView.setSelection(value.length)
-        viewModel.filterText(value)
     }
 
     override fun onCreateView(
@@ -50,26 +50,23 @@ class AdolescentListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.btnNextPage.visibility = View.GONE
-        binding.fabEdit.visibility = View.GONE
-        val benAdapter = BenListAdapter(
-            clickListener = BenListAdapter.BenClickListener(
-                { hhId, benId, isKid ->
+        binding.fabEdit.visibility = View.VISIBLE
+        val benAdapter = AdolescentHealthListAdapter(
+            clickListener = AdolescentHealthListAdapter.BenClickListener(){
 
-                },
-                {
-
-                },
-                { _, _ -> }
-            ), showBeneficiaries = true)
+            })
         binding.rvAny.adapter = benAdapter
+        binding.fabEdit.setOnClickListener {
+            findNavController().navigate(R.id.adolescentHealthFormFragment)
 
+        }
         lifecycleScope.launch {
-            viewModel.benList.collect {
+            viewModel.adolescentHealthList_.collect {
                 if (it.isEmpty()){
                     binding.flEmpty.visibility = View.VISIBLE
                 } else{
                     binding.flEmpty.visibility = View.GONE
-                    benAdapter.submitList(it.filter { it.ageInt in 10..19 })
+                    benAdapter.submitList(it)
                 }
 
             }

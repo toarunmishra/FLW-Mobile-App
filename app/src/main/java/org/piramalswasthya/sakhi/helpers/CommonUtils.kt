@@ -6,6 +6,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import androidx.core.text.isDigitsOnly
+import org.piramalswasthya.sakhi.model.AdolescentHealthDomain
 import org.piramalswasthya.sakhi.model.AncStatus
 import org.piramalswasthya.sakhi.model.BenBasicDomain
 import org.piramalswasthya.sakhi.model.BenBasicDomainForForm
@@ -41,6 +42,17 @@ fun filterBenList(list: List<BenBasicDomain>, text: String): List<BenBasicDomain
     }
 }
 
+fun filterAdolesenctList(list: List<AdolescentHealthDomain>, text: String): List<AdolescentHealthDomain> {
+    if (text == "")
+        return list
+    else {
+        val filterText = text.lowercase()
+        return list.filter {
+            filterAdolesent(it, filterText)
+        }
+    }
+}
+
 
 fun filterForBen(
     ben: BenBasicDomain,
@@ -58,6 +70,12 @@ fun filterForBen(
         ben.gender.lowercase().contains(filterText) ||
         ben.spouseName?.lowercase()?.contains(filterText) == true ||
         ben.fatherName?.lowercase()?.contains(filterText) ?: false
+
+
+fun filterAdolesent(
+    ben: AdolescentHealthDomain,
+    filterText: String
+) = ben.name.toString().lowercase().contains(filterText)
 
 
 fun filterBenFormList(

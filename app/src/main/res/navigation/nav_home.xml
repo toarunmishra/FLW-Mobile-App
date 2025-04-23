@@ -76,6 +76,7 @@
         <action
             android:id="@+id/action_homeFragment_to_childImmunizationListFragment"
             app:destination="@id/childImmunizationListFragment" />
+
     </fragment>
     <fragment
         android:id="@+id/allHouseholdFragment"
@@ -127,6 +128,12 @@
         <action
             android:id="@+id/action_childCareFragment_to_childListFragment"
             app:destination="@id/childListFragment" />
+
+        <action
+            android:id="@+id/action_childCareFragment_to_adolescentHealthListFragment"
+            app:destination="@id/adolescentHealthListFragment" />
+
+
     </fragment>
     <fragment
         android:id="@+id/motherCareFragment"
@@ -981,6 +988,14 @@
         android:name="org.piramalswasthya.sakhi.ui.home_activity.incentives.IncentivesFragment"
         android:label="fragment_incentives"
         tools:layout="@layout/fragment_incentives" />
+    <fragment
+        android:id="@+id/adolescentHealthFormFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.adolescent_health.AdolescentHealthFormFragment"
+        android:label="AdolescentHealthFormFragment" />
+    <fragment
+        android:id="@+id/adolescentHealthListFragment"
+        android:name="org.piramalswasthya.sakhi.ui.home_activity.child_care.adolescent_list.AdolescentHealthListFragment"
+        android:label="AdolescentHealthListFragment" />
 
 
 </navigation>

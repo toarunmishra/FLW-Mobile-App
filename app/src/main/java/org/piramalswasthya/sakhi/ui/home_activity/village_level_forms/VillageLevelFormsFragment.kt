@@ -11,12 +11,15 @@ import androidx.recyclerview.widget.GridLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.IconGridAdapter
+import org.piramalswasthya.sakhi.configuration.IconDataset
 import org.piramalswasthya.sakhi.databinding.RvIconGridBinding
 import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class VillageLevelFormsFragment : Fragment() {
-
+    @Inject
+    lateinit var iconDataset: IconDataset
     companion object {
         fun newInstance() = VillageLevelFormsFragment()
     }
@@ -33,7 +36,6 @@ class VillageLevelFormsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // TODO: Use the ViewModel
         setUpVillageLevelFormsIconRvAdapter()
     }
 
@@ -43,13 +45,14 @@ class VillageLevelFormsFragment : Fragment() {
             requireContext().resources.getInteger(R.integer.icon_grid_span)
         )
         binding.rvIconGrid.layoutManager = rvLayoutManager
-        binding.rvIconGrid.adapter = IconGridAdapter(
-            //IconDataset.getVillageLevelFormsDataset(),
+        val iconAdapter = IconGridAdapter(
             IconGridAdapter.GridIconClickListener {
                 findNavController().navigate(it)
             },
             viewModel.scope
         )
+        binding.rvIconGrid.adapter = iconAdapter
+        iconAdapter.submitList(iconDataset.getVillageLevelFormsDataset(resources))
     }
 
     override fun onStart() {

@@ -112,6 +112,10 @@ object AppModule {
     @Provides
     fun provideBenDao(database: InAppDb): BenDao = database.benDao
 
+    @Singleton
+    @Provides
+    fun provideAdolescentHealthDao(database: InAppDb): AdolescentHealthDao = database.adolescentHealthDao
+
 
     @Singleton
     @Provides

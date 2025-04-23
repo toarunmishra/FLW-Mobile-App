@@ -6,8 +6,10 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
+import org.piramalswasthya.sakhi.configuration.AdolescentHealthCache
 import org.piramalswasthya.sakhi.database.converters.LocationEntityListConverter
 import org.piramalswasthya.sakhi.database.converters.SyncStateConverter
+import org.piramalswasthya.sakhi.database.room.dao.AdolescentHealthDao
 import org.piramalswasthya.sakhi.database.room.dao.BenDao
 import org.piramalswasthya.sakhi.database.room.dao.BeneficiaryIdsAvailDao
 import org.piramalswasthya.sakhi.database.room.dao.CbacDao
@@ -65,6 +67,7 @@ import org.piramalswasthya.sakhi.model.Vaccine
     entities = [
         HouseholdCache::class,
         BenRegCache::class,
+        AdolescentHealthCache::class,
         BeneficiaryIdsAvail::class,
         CbacCache::class,
         CDRCache::class,
@@ -106,6 +109,7 @@ abstract class InAppDb : RoomDatabase() {
     abstract val benIdGenDao: BeneficiaryIdsAvailDao
     abstract val householdDao: HouseholdDao
     abstract val benDao: BenDao
+    abstract val adolescentHealthDao: AdolescentHealthDao
     abstract val cbacDao: CbacDao
     abstract val cdrDao: CdrDao
     abstract val mdsrDao: MdsrDao
