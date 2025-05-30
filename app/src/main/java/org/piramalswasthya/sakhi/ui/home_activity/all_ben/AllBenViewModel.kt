@@ -26,7 +26,7 @@ class AllBenViewModel @Inject constructor(
 
     private var sourceFromArgs = AllBenFragmentArgs.fromSavedStateHandle(savedStateHandle).source
 
-    private val allBenList = when (sourceFromArgs) {
+    val allBenList = when (sourceFromArgs) {
         1 -> {
             recordsRepo.allBenWithAbhaList
         }

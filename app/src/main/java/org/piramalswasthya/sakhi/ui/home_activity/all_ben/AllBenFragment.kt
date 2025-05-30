@@ -1,6 +1,7 @@
 package org.piramalswasthya.sakhi.ui.home_activity.all_ben
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -9,12 +10,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.Toast
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import org.piramalswasthya.sakhi.R
 import org.piramalswasthya.sakhi.adapters.BenListAdapter
@@ -27,6 +31,9 @@ import org.piramalswasthya.sakhi.ui.home_activity.HomeActivity
 import org.piramalswasthya.sakhi.ui.home_activity.all_household.AllHouseholdFragmentDirections
 import org.piramalswasthya.sakhi.ui.home_activity.home.HomeViewModel
 import timber.log.Timber
+import java.io.File
+import java.io.FileWriter
+import java.io.IOException
 
 @AndroidEntryPoint
 class AllBenFragment : Fragment() {
@@ -44,7 +51,7 @@ class AllBenFragment : Fragment() {
 
     private var selectedAbha = Abha.ALL
 
-    private val viewModel: AllBenViewModel by viewModels()
+    val viewModel: AllBenViewModel by viewModels()
     private val sttContract = registerForActivityResult(SpeechToTextContract()) { value ->
         binding.searchView.setText(value)
         binding.searchView.setSelection(value.length)
@@ -123,6 +130,18 @@ class AllBenFragment : Fragment() {
 
         if (args.source == 1 || args.source == 2) {
             binding.ibFilter.visibility = View.GONE
+            lifecycleScope.launch {
+                viewModel.allBenList.collect { benList ->
+                    if (benList.isNotEmpty()){
+                        binding.ibCsv.visibility = View.VISIBLE
+
+                    }
+                }
+            }
+        }
+
+        binding.ibCsv.setOnClickListener {
+            generateCsvFile(requireContext(),viewModel.allBenList)
         }
 
         benAdapter = BenListAdapter(
@@ -245,5 +264,48 @@ class AllBenFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    fun generateCsvFile(context: Context, benList: Flow<List<BenBasicDomain>>) {
+        val fileName = "export_abha.csv"
+        val file = File(context.getExternalFilesDir(null), fileName)
+
+        try {
+            val writer = FileWriter(file)
+            writer.append("Ben ID,Name,Age,Gender,Mobile,Father Name,ABHA no.\n")
+
+            lifecycleScope.launch {
+                benList.collect { benList ->
+                    for (ben in benList) {
+                        writer.append("${ben.benId},${ben.benFullName},${ben.age},${ben.gender},${ben.mobileNo},${ben.fatherName},${ben.abhaId}\n")
+
+                    }
+                }
+            }
+
+
+            writer.flush()
+            writer.close()
+            openCsvFile(requireContext(),file)
+
+            Toast.makeText(context, "CSV file saved to ${file.absolutePath}", Toast.LENGTH_LONG).show()
+        } catch (e: IOException) {
+            e.printStackTrace()
+            Toast.makeText(context, "Error writing file: ${e.message}", Toast.LENGTH_LONG).show()
+        }
+    }
+    fun openCsvFile(context: Context, file: File) {
+        val uri = FileProvider.getUriForFile(
+            context,
+            "${context.packageName}.provider",
+            file
+        )
+
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(uri, "text/csv")
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+
+        context.startActivity(Intent.createChooser(intent, "Open CSV File"))
     }
 }
