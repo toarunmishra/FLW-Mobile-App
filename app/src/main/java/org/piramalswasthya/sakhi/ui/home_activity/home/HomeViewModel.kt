@@ -72,12 +72,12 @@ class HomeViewModel @Inject constructor(
                         value.filter { it.syncState != SyncState.SYNCED }.sumOf { it.count }
                 }
             }
-            val firebaseToken = FirebaseMessaging.getInstance().token.await()
-            val userId = currentUser?.userId
-            val updatedAt = Instant.now().toString()
-            if (userId != null) {
-                userRepo.saveFirebaseToken(userId, firebaseToken, updatedAt)
-            }
+//            val firebaseToken = FirebaseMessaging.getInstance().token.await()
+//            val userId = currentUser?.userId
+//            val updatedAt = Instant.now().toString()
+//            if (userId != null) {
+//                userRepo.saveFirebaseToken(userId, firebaseToken, updatedAt)
+//            }
         }
     }
 
